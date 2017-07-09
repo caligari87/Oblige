@@ -152,13 +152,6 @@ MONSTER_KIND_TAB =
   nuts   = 2.0
 }
 
-RAMP_UP_FACTORS =
-{
-  slow   = 0.60
-  medium = 1.00
-  fast   = 1.70
-}
-
 BOSS_FACTORS =
 {
   easier = 0.30
