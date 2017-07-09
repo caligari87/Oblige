@@ -9,6 +9,9 @@ Monsters
 +  more sophisticated handling of monster roles
    [ e.g. eventually use Archviles in cages and traps ]
 
+-  bring back "skip_prob", and have a global palette
+   with "none", "less" and "some"
+
 -  each monster has a "boss_level" value, defaulting to 1
 
    we compute an effective boss level of each monster for each map
