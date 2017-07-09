@@ -100,32 +100,39 @@ function DOOM.get_levels()
   -- create level info...
 
   for map = 1,MAP_NUM do
+    local game_along
+
+    if MAP_NUM == 1 then
+      game_along = 0.75
+    elseif OB_CONFIG.length == "game" then
+      game_along = (map - 1) / (MAP_NUM - 3)
+    else
+      game_along = (map - 1) / (MAP_NUM - 1)
+    end
+
     -- determine episode from map number
     local ep_index
     local ep_along
 
-    local game_along = map / MAP_NUM
 
     if map > 30 then
       ep_index = 3 ; ep_along = 0.5 ; game_along = 0.5
-    elseif map > 20 then
-      ep_index = 3 ; ep_along = (map - 20) / 10
-    elseif map > 11 then
-      ep_index = 2 ; ep_along = (map - 11) / 9
+    elseif map >= 21 then
+      ep_index = 3 ; ep_along = (map - 21) / 8
+    elseif map >= 12 then
+      ep_index = 2 ; ep_along = (map - 12) / 9
     else
-      ep_index = 1 ; ep_along = map / 11
+      ep_index = 1 ; ep_along = (map - 1) / 11
     end
 
     if OB_CONFIG.length == "single" then
-      game_along = 0.57
-      ep_along   = 0.75
-
+      ep_along = 0.75
     elseif OB_CONFIG.length == "few" then
       ep_along = game_along
     end
 
-    assert(ep_along <= 1.0)
-    assert(game_along <= 1.0)
+      ep_along = math.clamp(0,   ep_along, 1)
+    game_along = math.clamp(0, game_along, 1)
 
     local EPI = GAME.episodes[ep_index]
     assert(EPI)
@@ -137,7 +144,7 @@ function DOOM.get_levels()
       name  = string.format("MAP%02d", map)
       patch = string.format("CWILV%02d", map-1)
 
-      ep_along = ep_along
+        ep_along =   ep_along
       game_along = game_along
     }
 

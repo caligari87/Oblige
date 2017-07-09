@@ -856,18 +856,20 @@ function Episode_plan_monsters()
     if OB_CONFIG.length == "single" then
       along = rand.range(0.75, 1.0)
 
-    elseif OB_CONFIG.length == "game" then
-      along = along * 1.5
-
     elseif OB_CONFIG.ramp_up == "epi" then
-      along = (LEV.ep_along * 3 + LEV.game_along) / 4
+      along = (LEV.ep_along * 2 + LEV.game_along) / 3
+
+    elseif OB_CONFIG.length == "game" and not LEV.is_secret then
+      along = along * 1.5
     end
 
     assert(along >= 0)
 
     -- apply the Ramp-Up setting
 
-    along = along * RAMP_UP_FACTORS[OB_CONFIG.ramp_up] or 1.0
+    local factor = RAMP_UP_FACTORS[OB_CONFIG.ramp_up] or 1.0
+
+    along = along * factor
 
 stderrf("mon_along @ %s : %1.2f\n", LEV.name, along)
 

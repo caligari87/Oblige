@@ -23,6 +23,7 @@ Monsters
    the HP-limit and DMG-limit don't apply to the boss monsters in a room
    [ though they may be reduced to account for them ]
 
+-  kill "episodic_monsters" from GAME defs
 
 -  a big boss fight every half-episode
 

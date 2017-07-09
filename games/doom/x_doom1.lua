@@ -2278,13 +2278,20 @@ function ULTDOOM.get_levels()
     local EPI = GAME.episodes[ep_index]
 
     for map = 1,MAP_NUM do
-      local ep_along = map / LEV_MAX
+      local ep_along
 
       if MAP_NUM == 1 then
-        ep_along = rand.range(0.3, 0.7);
+        ep_along = 0.75
       elseif map == 9 then
         ep_along = 0.5
+      else
+        ep_along = (map - 1) / (LEV_MAX - 1)
       end
+
+      local game_along = ((ep_index - 1) + ep_along) / EP_NUM
+
+        ep_along = math.clamp(0,   ep_along, 1)
+      game_along = math.clamp(0, game_along, 1)
 
       local LEV =
       {
@@ -2293,8 +2300,8 @@ function ULTDOOM.get_levels()
         name  = string.format("E%dM%d",   ep_index,   map)
         patch = string.format("WILV%d%d", ep_index-1, map-1)
 
-        ep_along = ep_along
-        game_along = (ep_index - 1 + ep_along) / EP_NUM
+          ep_along =   ep_along
+        game_along = game_along
       }
 
       table.insert( EPI.levels, LEV)
