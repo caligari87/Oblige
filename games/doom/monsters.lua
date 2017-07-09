@@ -16,15 +16,12 @@
 -- ===============
 --
 -- id         : editor number used to place monster on the map
--- level      : how far along (over episode) it should appear (1..9)
---
--- prob       : general probability of being used
--- crazy_prob : probability for "Crazy" setting (default is 50)
+-- rank       : measure of "boss-ness", values < 3.0 are fodder
+-- density    : how many to use, range is 0 to 99
 --
 -- health : hit points of monster
 -- damage : total damage inflicted on player (on average)
 -- attack : kind of attack (hitscan | missile | melee)
--- density : how many too use (e.g. 0.5 = half the normal amount)
 --
 -- float  : true if monster floats (flies)
 -- invis  : true if invisible (or partially)
@@ -32,6 +29,8 @@
 -- weap_needed : weapons player must have to fight this monster
 -- weap_min_damage : damage (per second) of player weapon required
 -- weap_prefs : weapon preferences table (usage by player)
+--
+-- species    : name of species (default is monster itself)
 -- disloyal   : can hurt a member of same species
 -- infight_damage : damage inflicted on one (or more) other monsters
 --
@@ -58,7 +57,7 @@ DOOM.MONSTERS =
     id = 3004
     r = 20
     h = 56 
-    level = 1
+    rank = 0.5
     prob = 50
     health = 20
     damage = 1.2
@@ -76,7 +75,7 @@ DOOM.MONSTERS =
     id = 9
     r = 20
     h = 56 
-    level = 2
+    rank = 1.5
     prob = 90
     health = 30
     damage = 3.0
@@ -96,7 +95,7 @@ DOOM.MONSTERS =
     id = 3001
     r = 20
     h = 56 
-    level = 1
+    rank = 1.0
     prob = 140
     health = 60
     damage = 1.3
@@ -112,7 +111,7 @@ DOOM.MONSTERS =
     id = 3006
     r = 16
     h = 56 
-    level = 2
+    rank = 1.5
     prob = 25
     health = 100
     damage = 1.7
@@ -131,7 +130,7 @@ DOOM.MONSTERS =
     id = 3002
     r = 30
     h = 56 
-    level = 2
+    rank = 2.2
     prob = 50
     health = 150
     damage = 0.4
@@ -148,7 +147,7 @@ DOOM.MONSTERS =
     id = 58
     r = 30
     h = 56 
-    level = 2.8
+    rank = 2.8
     replaces = "demon"
     replace_prob = 35
     crazy_prob = 25
@@ -171,7 +170,7 @@ DOOM.MONSTERS =
     id = 3005
     r = 31
     h = 56 
-    level = 3
+    rank = 3.8
     prob = 30
     health = 400
     damage = 4.0
@@ -192,7 +191,7 @@ DOOM.MONSTERS =
     id = 3003
     r = 24
     h = 64 
-    level = 6
+    rank = 6.6
     boss_type = "minor"
     boss_prob = 50
     prob = 6.4
@@ -211,7 +210,7 @@ DOOM.MONSTERS =
     id = 16
     r = 40
     h = 110
-    level = 7
+    rank = 9.9
     boss_type = "tough"
     boss_prob = 50
     prob = 1.6
@@ -231,7 +230,7 @@ DOOM.MONSTERS =
     id = 7
     r = 128
     h = 100
-    level = 9
+    rank = 9.6
     boss_type = "tough"
     boss_prob = 15
     boss_limit = 1 -- because they infight
@@ -256,7 +255,7 @@ DOOM.MONSTERS =
     id = 65
     r = 20
     h = 56 
-    level = 3
+    rank = 3.5
     prob = 60
     health = 70
     damage = 5.5
@@ -277,7 +276,7 @@ DOOM.MONSTERS =
     id = 66
     r = 20
     h = 64 
-    level = 4.6
+    rank = 4.9
     prob = 28
     health = 300
     damage = 8.5
@@ -294,7 +293,7 @@ DOOM.MONSTERS =
     id = 69
     r = 24
     h = 64 
-    level = 4
+    rank = 4.9
     prob = 26
     health = 500
     damage = 4.0
@@ -311,7 +310,7 @@ DOOM.MONSTERS =
     id = 67
     r = 48
     h = 64 
-    level = 4.3
+    rank = 5.5
     prob = 20
     health = 600
     damage = 8.0
@@ -327,7 +326,7 @@ DOOM.MONSTERS =
     id = 68
     r = 64
     h = 64 
-    level = 5
+    rank = 5.5
     prob = 12
     health = 500
     damage = 10.7
@@ -344,7 +343,7 @@ DOOM.MONSTERS =
     id = 64
     r = 20
     h = 56 
-    level = 6.5
+    rank = 7.9
     boss_type = "nasty"
     boss_prob = 50
     prob = 5
@@ -364,7 +363,7 @@ DOOM.MONSTERS =
     id = 71
     r = 31
     h = 56 
-    level = 5.5
+    rank = 6.3
     boss_type = "nasty"
     boss_prob = 15
     prob = 10
@@ -387,9 +386,8 @@ DOOM.MONSTERS =
     id = 84
     r = 20
     h = 56 
-    level = 1
-    prob  = 0
-    crazy_prob = 0
+    rank = 2.2
+    prob = 0
     health = 50
     damage = 2.8
     attack = "hitscan"

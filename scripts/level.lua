@@ -66,11 +66,11 @@
 
     === Monster planning ===
 
-    monster_level   -- the maximum level of a monster usable here [ except bosses ]
-
-    new_monsters    -- monsters which player has not encountered yet
+    mon_ranks       -- the effective boss level of each monster, < 3 is fodder
 
     global_pal      -- global palette, can ONLY use these monsters [ except for bosses ]
+
+    new_monsters    -- monsters which player has not encountered yet
 
     boss_fights : list(BOSS_FIGHT)   -- boss fights, from biggest to smallest
 
@@ -277,11 +277,11 @@ function Episode_plan_monsters()
   local function default_level(info)
     local hp = info.health
 
-    if hp < 45  then return 1 end
-    if hp < 130 then return 3 end
-    if hp < 450 then return 5 end
+    if hp < 45  then return 0 end
+    if hp < 130 then return 2.2 end
+    if hp < 450 then return 4.5 end
 
-    return 7
+    return 7.5
   end
 
 
@@ -296,9 +296,9 @@ function Episode_plan_monsters()
         info.prob = 50
       end
 
-      -- default level
-      if not info.level then
-        info.level = default_level(info)
+      -- default boss level
+      if not info.boss_level then
+        info.boss_level = default_level(info)
       end
     end
   end
@@ -365,7 +365,7 @@ function Episode_plan_monsters()
   local function is_monster_usable(LEV, mon, info)
     if info.prob <= 0 then return false end
 
-    if info.level > LEV.monster_level then return false end
+--!!!    if info.level > LEV.monster_level then return false end
 
     if info.weap_min_damage and info.weap_min_damage > LEV.weap_max_damage then return false end
 
@@ -472,7 +472,7 @@ function Episode_plan_monsters()
     if info.prob <= 0 then return false end
     if info.boss_prob == 0 then return false end
 
-    if info.level > LEV.monster_level + BOSS_AHEAD then return false end
+--!!!!    if info.level > LEV.monster_level + BOSS_AHEAD then return false end
 
     if info.weap_min_damage and info.weap_min_damage > LEV.weap_max_damage then return false end
 
@@ -503,7 +503,7 @@ function Episode_plan_monsters()
 
     if info.weap_min_damage and info.weap_min_damage > LEV.weap_max_damage then return 0 end
 
-    if info.level > LEV.monster_level + BOSS_AHEAD then return 0 end
+--!!!!    if info.level > LEV.monster_level + BOSS_AHEAD then return 0 end
 
     -- ignore theme-specific monsters (SS NAZI)
     if info.theme then return 0 end
@@ -845,15 +845,41 @@ function Episode_plan_monsters()
   end
 
 
+  local function calc_ranks(LEV)
+    local along = LEV.game_along
+
+    if OB_CONFIG.length == "single" then
+      along = rand.range(0.75, 1.0)
+
+    elseif OB_CONFIG.length == "game" then
+      along = along * 1.5
+
+    elseif OB_CONFIG.ramp_up == "epi" then
+      along = (LEV.ep_along * 3 + LEV.game_along) / 4
+    end
+
+    assert(along >= 0)
+
+    -- apply the Ramp-Up setting
+
+    along = along * RAMP_UP_FACTORS[OB_CONFIG.ramp_up] or 1.0
+
+stderrf("mon_along @ %s : %1.2f\n", LEV.name, along)
+
+    LEV.mon_ranks = {}
+
+    each mon,info in GAME.MONSTERS do
+      LEV.mon_ranks[mon] = info.rank - along * 5.7
+    end
+  end
+
+
   ---| Episode_plan_monsters |---
 
   init_monsters()
 
-  if OB_CONFIG.bosses == "easier" then BOSS_AHEAD = 1.9 end
-  if OB_CONFIG.bosses == "harder" then BOSS_AHEAD = 2.7 end
-
   each LEV in GAME.levels do
-    calc_monster_level(LEV)
+    calc_ranks(LEV)
   end
 
   mark_new_monsters()

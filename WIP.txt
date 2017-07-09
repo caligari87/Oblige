@@ -17,7 +17,7 @@ Monsters
    we compute an effective boss level of each monster for each map
    [ e.g. map_boss_levels[mon] = info.boss_lev - N * game_along ]
 
-   when effective level is < 4, then monster can be used as "fodder",
+   when effective level is < 3, then monster can be used as "fodder",
    otherwise monster can only be used in a boss fight.
 
    the HP-limit and DMG-limit don't apply to the boss monsters in a room

@@ -1150,6 +1150,7 @@ function Monster_fill_room(R)
     prob = prob * calc_strength_factor(info)
 
 
+--[[
     -- level check (harder monsters occur in later rooms)
     assert(info.level)
 
@@ -1161,6 +1162,7 @@ function Monster_fill_room(R)
         prob = prob / 20
       end
     end
+--]]
 
     return prob
   end
@@ -1171,6 +1173,7 @@ function Monster_fill_room(R)
 
     local d = info.density or 1
 
+--[[ TODO : keep??
     -- level check
     if OB_CONFIG.strength != "crazy" then
       local max_level = LEVEL.monster_level * R.lev_along
@@ -1180,6 +1183,7 @@ function Monster_fill_room(R)
         d = d / 4
       end
     end
+--]]
 
     -- adjustment for single-monster levels
     if STYLE.mon_variety == "none" then
