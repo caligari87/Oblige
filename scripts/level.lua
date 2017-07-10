@@ -70,9 +70,10 @@
      major_rank   -- monsters with a higher rank are major bosses (exit rooms)
     fodder_rank   -- monsters with a higher rank are minor bosses (key/item guarders)
 
-    global_pal      -- global palette, can ONLY use these monsters
+    new_monsters  -- monsters which player has not encountered yet
 
-    new_monsters    -- monsters which player has not encountered yet
+    global_pal    -- global palette, can ONLY use these monsters
+                  -- values are either "some" or "less"
 
     boss_fights : list(BOSS_FIGHT)   -- boss fights, from biggest to smallest
 
@@ -284,6 +285,10 @@ function Episode_plan_monsters()
   -- [ excludes ones disabled by Monster Control module ]
   local avail_monsters = {}
 
+  -- all the monsters which have occurred so far
+  -- [ not distinguishing the role here, e.g. boss vs fodder ]
+  local seen_monsters = {}
+
 
   local function get_avail_monsters()
     if OB_CONFIG.mons == "NONE" then return end
@@ -309,7 +314,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function init_monsters()
+  local function init_monsters__OLD()
     each name,info in GAME.MONSTERS do
       if not info.id then
         error(string.format("Monster '%s' lacks an id field", name))
@@ -328,7 +333,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function calc_monster_level(LEV)
+  local function calc_monster_level__OLD(LEV)
     if OB_CONFIG.strength == "crazy" then
       LEV.monster_level = 12
       return
@@ -399,7 +404,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function mark_new_monsters()
+  local function mark_new_monsters__OLD()
     -- for each level, determine what monsters can be used, and also
     -- which ones are NEW for that level.
     local seen_monsters = {}
@@ -451,7 +456,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function pick_global_palette(LEV)
+  local function pick_global_palette__OLD(LEV)
     --
     -- decides which monsters we will use on this level.
     -- easiest way is to pick some monsters NOT to use.
@@ -960,6 +965,7 @@ function Episode_plan_monsters()
 
 
   local function decide_global_palette(LEV)
+    -- firstly, collect monsters which are not too tough to face
     local pal = {}
 
     local tough_count = 0
@@ -973,8 +979,12 @@ function Episode_plan_monsters()
         continue
       end
 
-      pal[mon] = 1.0
+      pal[mon] = "some"
     end
+
+    LEV.global_pal = pal
+
+    -- secondly, decide which monsters too skip (beyond the too-tough ones)
 
     local extra_skip = LEV.skip_count - tough_count
 
@@ -986,6 +996,44 @@ function Episode_plan_monsters()
 
       each mon in group do
         pal[mon] = nil
+      end
+    end
+
+    -- thirdly, pick a few monsters to be used less than normal
+
+    local oldies = {}
+
+    each mon,_ in pal do
+      if seen_monsters[mon] then
+        table.insert(oldies, mon)
+      end
+    end
+
+    local old_num = #oldies
+
+    local less_qty = rand.skew(0.3, 0.3)
+    local less_num = rand.int(old_num * less_qty)
+
+    less_num = math.clamp(0, less_num, old_num)
+
+-- stderrf("Less usage on %s : %1.2f --> #%d (of %d oldies)\n",
+--         LEV.name, less_qty, less_num, old_num)
+
+    rand.shuffle(oldies)
+
+    for i = 1, less_num do
+      local mon = oldies[i]
+      pal[mon] = "less"
+    end
+
+    -- lastly, mark monsters which are new
+
+    LEV.new_monsters = {}
+
+    each mon,_ in pal do
+      if not seen_monsters[mon] then
+        LEV.new_monsters[mon] = 1
+        seen_monsters[mon] = 1
       end
     end
   end
@@ -1000,21 +1048,13 @@ function Episode_plan_monsters()
     return
   end
 
-init_monsters()  -- REMOVE
-
   each LEV in GAME.levels do
     calc_ranks(LEV)
     calc_skip_quantity(LEV)
     decide_global_palette(LEV)
   end
 
-  mark_new_monsters()
-
-  each LEV in GAME.levels do
-    pick_global_palette(LEV)
-  end
-
-  decide_boss_fights()
+--!!!! decide_boss_fights()
 
 ---  dump_monster_info()
 end
