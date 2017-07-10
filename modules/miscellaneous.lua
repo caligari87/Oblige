@@ -34,12 +34,6 @@ MISC_STUFF.LIGHTINGS =
 }
 
 
-MISC_STUFF.variety_tip = _(
-    "Affects how many different monster types can "..
-    "appear in each room.  "..
-    "Setting this to NONE will make each level use a single monster type")
-
-
 function MISC_STUFF.begin_level(self)
   each opt in self.options do
     local name  = assert(opt.name)
@@ -97,7 +91,6 @@ OB_MODULES["misc"] =
     { name="symmetry",    label=_("Symmetry"),       choices=STYLE_CHOICES, gap=1 }
 
     { name="darkness",    label=_("Dark Outdoors"),  choices=STYLE_CHOICES }
-    { name="mon_variety", label=_("Monster Variety"),choices=STYLE_CHOICES, tooltip=MISC_STUFF.variety_tip }
     { name="barrels",     label=_("Barrels"),        choices=STYLE_CHOICES, gap=1 }
 
     { name="doors",       label=_("Doors"),          choices=STYLE_CHOICES }

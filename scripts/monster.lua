@@ -822,10 +822,6 @@ function Monster_fill_room(R)
       assert(factor)
     end
 
-    -- apply 'mon_variety' style
-    -- [ this style is only set via the Level Control module ]
-    factor = factor * style_sel("mon_variety", 0, 0.5, 1.0, 2.1)
-
     -- slightly more at end of a game
     factor = factor * (0.8 + LEVEL.game_along * 0.4)
 
@@ -1184,11 +1180,6 @@ function Monster_fill_room(R)
       end
     end
 --]]
-
-    -- adjustment for single-monster levels
-    if STYLE.mon_variety == "none" then
-      d = (d + 1) / 2
-    end
 
     -- zone quantities
     d = d * (R.zone.mon_palette[mon] or 1)

@@ -433,7 +433,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function pick_single_for_level(LEV)
+  local function pick_single_for_level__OLD(LEV)
     local tab = {}
 
     if not LEV.episode.single_mons then
@@ -472,12 +472,6 @@ function Episode_plan_monsters()
     --
 
     LEV.global_pal = {}
-
-    -- only one kind of monster in this level?
-    if STYLE.mon_variety == "none" then
-      pick_single_for_level(LEV)
-      return
-    end
 
     each name,_ in LEV.seen_monsters do
       local info = GAME.MONSTERS[name]
