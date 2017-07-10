@@ -273,12 +273,29 @@ function Episode_plan_monsters()
   -- (3) guarding monsters (aka "mini bosses")
   -- (4) one day: boss fights for special levels
   --
-
   local used_types  = {}
   local used_bosses = {}
   local used_guards = {}
 
   local BOSS_AHEAD = 2.2
+
+
+  -- a list of all potentially usable monsters
+  -- [ excludes ones disabled by Monster Control module ]
+  local avail_monsters = {}
+
+
+  local function get_avail_monsters()
+    if OB_CONFIG.mons == "NONE" then return end
+
+    each name,info in GAME.MONSTERS do
+      if info.density and info.density > 0 and
+         (info.skip or 0) < 100
+      then
+        table.insert(avail_monsters, name)
+      end
+    end
+  end
 
 
   local function default_level(info)
@@ -886,8 +903,7 @@ function Episode_plan_monsters()
   local function calc_skip_quantity(LEV)
     local along = LEV.game_along
 
-    -- FIXME : count # of monsters [ usable as fodder OR boss ]
-    local total = 15
+    local total = #avail_monsters
 
     local H = math.clamp(0, (1.0 - along * 0.8) * 0.70, 1)
     local L = math.clamp(0, H - 0.35, 1)
@@ -903,7 +919,14 @@ function Episode_plan_monsters()
 
   ---| Episode_plan_monsters |---
 
-  init_monsters()
+  get_avail_monsters()
+
+  if table.empty(avail_monsters) then
+    gui.printf("Plan monsters : none available!\n")
+    return
+  end
+
+init_monsters()  -- REMOVE
 
   each LEV in GAME.levels do
     calc_ranks(LEV)
