@@ -66,9 +66,11 @@
 
     === Monster planning ===
 
-    mon_ranks       -- the effective boss level of each monster, < 3 is fodder
+      skip_rank   -- monsters with a higher rank are skipped (too tough)
+     major_rank   -- monsters with a higher rank are major bosses (exit rooms)
+    fodder_rank   -- monsters with a higher rank are minor bosses (key/item guarders)
 
-    global_pal      -- global palette, can ONLY use these monsters [ except for bosses ]
+    global_pal      -- global palette, can ONLY use these monsters
 
     new_monsters    -- monsters which player has not encountered yet
 
@@ -865,19 +867,19 @@ function Episode_plan_monsters()
 
     -- apply the Ramp-Up setting
 
---[[
-    if OB_CONFIG.ramp_up == "slow"   then along = 0.0 + (along ^ 1.6) * 1.0 end
-    if OB_CONFIG.ramp_up == "medium" then along = 0.0 + (along ^ 1.2) * 1.5 end
-    if OB_CONFIG.ramp_up == "fast"   then along = 0.1 + (along ^ 1.0) * 2.0 end
-    if OB_CONFIG.ramp_up == "turbo"  then along = 0.3 + (along ^ 0.8) * 2.5 end
---]]
+    if OB_CONFIG.ramp_up == "slow"   then along = 0.0 + (along ^ 1.9) * 0.9 end
+    if OB_CONFIG.ramp_up == "medium" then along = 0.0 + (along ^ 1.0) * 1.0 end
+    if OB_CONFIG.ramp_up == "fast"   then along = 0.1 + (along ^ 0.7) * 1.2 end
+    if OB_CONFIG.ramp_up == "turbo"  then along = 0.3 + (along ^ 0.5) * 1.6 end
 
-    LEV.mon_ranks = {}
     LEV.mon_along = along
 
-    each mon,info in GAME.MONSTERS do
-      LEV.mon_ranks[mon] = math.clamp(0, info.rank - along * 5.0, 10)
-    end
+    LEV.  skip_rank = int(40 + along * 140)
+    LEV. major_rank = int(25 + along * 110)
+    LEV.fodder_rank = int(10 + along *  80)
+
+    stderrf("%s: skip > %03d  major > %03d  fodder < %03d\n", LEV.name,
+            LEV.skip_rank, LEV.major_rank, LEV.fodder_rank)
   end
 
 
@@ -894,7 +896,7 @@ function Episode_plan_monsters()
 
     num = math.floor(num * total)
 
-stderrf(string.format("%s: skip %1.3f .. %1.3f --> %d\n", LEV.name, L, H, num))
+-- stderrf(string.format("%s: skip %1.3f .. %1.3f --> %d\n", LEV.name, L, H, num))
 
   end
 
