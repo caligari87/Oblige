@@ -70,10 +70,10 @@
      major_rank   -- monsters with a higher rank are major bosses (exit rooms)
     fodder_rank   -- monsters with a higher rank are minor bosses (key/item guarders)
 
-    new_monsters  -- monsters which player has not encountered yet
-
     global_pal    -- global palette, can ONLY use these monsters
                   -- values are either "some" or "less"
+
+---###  new_monsters  -- monsters which player has not encountered yet
 
     boss_fights : list(BOSS_FIGHT)   -- boss fights, from biggest to smallest
 
@@ -290,13 +290,20 @@ function Episode_plan_monsters()
   local seen_monsters = {}
 
 
+  local function is_monster_available(name, info)
+    if (info.density or 0) <= 0 then return false end
+
+    if (info.skip or 0) >= 100 then return false end
+
+    return true
+  end
+
+
   local function get_avail_monsters()
     if OB_CONFIG.mons == "NONE" then return end
 
     each name,info in GAME.MONSTERS do
-      if info.density and info.density > 0 and
-         (info.skip or 0) < 100
-      then
+      if is_monster_available(name, info) then
         table.insert(avail_monsters, name)
       end
     end
@@ -973,7 +980,9 @@ function Episode_plan_monsters()
     each mon in avail_monsters do
       local info = GAME.MONSTERS[mon]
 
-      if info.rank >= LEV.skip_rank then
+      if info.rank >= LEV.skip_rank or
+         (info.weap_min_damage and info.weap_min_damage > LEV.weap_max_damage)
+      then
         -- skip it, too tough for us
         tough_count = tough_count + 1
         continue
@@ -981,8 +990,6 @@ function Episode_plan_monsters()
 
       pal[mon] = "some"
     end
-
-    LEV.global_pal = pal
 
     -- secondly, decide which monsters too skip (beyond the too-tough ones)
 
@@ -1026,16 +1033,17 @@ function Episode_plan_monsters()
       pal[mon] = "less"
     end
 
-    -- lastly, mark monsters which are new
+    -- lastly, update the seen_monsters
 
-    LEV.new_monsters = {}
+---###  LEV.new_monsters = {}
 
     each mon,_ in pal do
-      if not seen_monsters[mon] then
-        LEV.new_monsters[mon] = 1
-        seen_monsters[mon] = 1
-      end
+      seen_monsters[mon] = 1
     end
+
+    LEV.global_pal = pal
+
+gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   end
 
 
