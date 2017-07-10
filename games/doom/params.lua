@@ -27,13 +27,6 @@ DOOM.PARAMETERS =
   -- number of lines for intermission and end-of-episode texts
   max_screen_lines = 16
 
-  skip_monsters = { 20,30,45 }
-
-  monster_factor = 1.25
-  health_factor  = 1.0
-  ammo_factor    = 1.0
-  time_factor    = 1.0
-
   bex_map_prefix = "HUSTR_"
 
   bex_secret_name  = "C5TEXT"

@@ -46,13 +46,6 @@ HEXEN.PARAMETERS =
   jump_height = 66
 
   max_name_length = 28
-
-  skip_monsters = { 20,30 }
-
-  monster_factor = 1.0
-  health_factor  = 1.0
-  ammo_factor    = 1.0
-  time_factor    = 1.0
 }
 
 ------------------------------------------------------------

@@ -58,13 +58,6 @@ QUAKE.PARAMETERS =
   -- the name buffer in Quake can fit 39 characters, however
   -- the on-screen space for the name is much less.
   max_name_length = 20
-
-  skip_monsters = { 20,30 }
-
-  monster_factor = 0.7
-  health_factor  = 1.0
-  ammo_factor    = 1.0
-  time_factor    = 1.0
 }
 
 ------------------------------------------------------------

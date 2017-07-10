@@ -427,7 +427,7 @@ function Monster_zone_palettes()
     -- the indices represent: none | less | some | more
     local quants = {}
 
-    local skip_perc = rand.pick(PARAM.skip_monsters or { 25 })
+    local skip_perc = 25  ---### rand.pick(PARAM.skip_monsters or { 25 })
 
     -- skip less monsters in small early maps
     if #LEVEL.zones == 1 and LEVEL.monster_level < 5 then
@@ -872,10 +872,6 @@ function Monster_fill_room(R)
       qty = qty * 8
     end
 
-    -- game and theme adjustments
-    qty = qty * (PARAM.monster_factor or 1)
-    qty = qty * (THEME.monster_factor or 1)
-
     -- apply the room "pressure" type
     if R.pressure == "low"  then qty = qty / 2.5 end
     if R.pressure == "high" then qty = qty * 1.5 end
@@ -962,10 +958,6 @@ function Monster_fill_room(R)
     local info = GAME.MONSTERS[mon]
 
     local time = info.health / R.firepower
-
-    if PARAM.time_factor then
-      time = time * PARAM.time_factor
-    end
 
     local max_time = 10 -- seconds
 

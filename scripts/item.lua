@@ -465,9 +465,6 @@ function Item_simulate_battle(R)
     local heal_mul = HEALTH_FACTORS[OB_CONFIG.health]
     local ammo_mul =   AMMO_FACTORS[OB_CONFIG.ammo]
 
-    heal_mul = heal_mul * (PARAM.health_factor or 1)
-    ammo_mul = ammo_mul * (PARAM.ammo_factor or 1)
-
     -- give less ammo in later maps (to counter the build-up over an episode)
     if not PARAM.pistol_starts then
       local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.8)
