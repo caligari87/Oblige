@@ -9,6 +9,8 @@ Monsters
 +  more sophisticated handling of monster roles
    [ e.g. eventually use Archviles in cages and traps ]
 
+IDEA : "glacial" setting for Ramp-Up
+
 -  bring back "skip_prob", and have a global palette
    with "none", "less" and "some"
 
