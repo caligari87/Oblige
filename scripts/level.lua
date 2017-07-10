@@ -895,8 +895,8 @@ function Episode_plan_monsters()
     LEV. major_rank = int(25 + along * 110)
     LEV.fodder_rank = int(10 + along *  80)
 
-    stderrf("%s: skip > %03d  major > %03d  fodder < %03d\n", LEV.name,
-            LEV.skip_rank, LEV.major_rank, LEV.fodder_rank)
+--  stderrf("%s: skip > %03d  major > %03d  fodder < %03d\n", LEV.name,
+--          LEV.skip_rank, LEV.major_rank, LEV.fodder_rank)
   end
 
 
@@ -905,15 +905,89 @@ function Episode_plan_monsters()
 
     local total = #avail_monsters
 
-    local H = math.clamp(0, (1.0 - along * 0.8) * 0.70, 1)
+    local H = math.clamp(0, (1.0 - along * 0.85) * 0.70, 1)
     local L = math.clamp(0, H - 0.35, 1)
 
     local num = rand.range(L, H)
 
     num = math.floor(num * total)
 
--- stderrf(string.format("%s: skip %1.3f .. %1.3f --> %d\n", LEV.name, L, H, num))
+-- stderrf("%s: skip %1.3f .. %1.3f --> %d\n", LEV.name, L, H, num)
 
+    LEV.skip_count = num
+  end
+
+
+  local function make_a_skip_group(pal)
+    local group = {}
+
+    for pass = 1, 10 do
+      each mon,_ in pal do
+        local info = GAME.MONSTERS[mon]
+
+        if rand.odds(info.skip or 5) then
+          table.insert(group, mon)
+        end
+      end
+
+      if #group > 0 then break; end
+    end
+
+    return group
+  end
+
+
+  local function iterate_a_skip_group(pal, want_size)
+    local best = {}
+
+    -- try to get a group with exactly the wanted size, or
+    -- failing that a smaller group as close as possible.
+
+    for loop = 1, 30 do
+      local group = make_a_skip_group(pal)
+
+      if #group == want_size then
+        return group
+      end
+
+      if #group <  want_size and #best < want_size and #group > #best then
+        best = group
+      end
+    end
+
+    return best
+  end
+
+
+  local function decide_global_palette(LEV)
+    local pal = {}
+
+    local tough_count = 0
+
+    each mon in avail_monsters do
+      local info = GAME.MONSTERS[mon]
+
+      if info.rank >= LEV.skip_rank then
+        -- skip it, too tough for us
+        tough_count = tough_count + 1
+        continue
+      end
+
+      pal[mon] = 1.0
+    end
+
+    local extra_skip = LEV.skip_count - tough_count
+
+    if extra_skip > 0 then
+      local group = iterate_a_skip_group(pal, extra_skip)
+
+-- stderrf("%s: extra_skip:%d --> GOT %d\n", LEV.name, extra_skip, #G)
+-- stderrf("-----> %s\n", table.list_str(G))
+
+      each mon in group do
+        pal[mon] = nil
+      end
+    end
   end
 
 
@@ -931,6 +1005,7 @@ init_monsters()  -- REMOVE
   each LEV in GAME.levels do
     calc_ranks(LEV)
     calc_skip_quantity(LEV)
+    decide_global_palette(LEV)
   end
 
   mark_new_monsters()

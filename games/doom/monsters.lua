@@ -406,13 +406,13 @@ DOOM.MONSTERS =
     r = 20
     h = 56 
     rank = 3
+    density = 0
     prob = 0
     skip = 99
     health = 50
     damage = 2.8
     attack = "hitscan"
     give = { {ammo="bullet",count=5} }
-    density = 1.5
     infight_damage = 6.0
   }
 }
