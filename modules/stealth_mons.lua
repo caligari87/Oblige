@@ -257,7 +257,7 @@ function STEALTH.setup(self)
 end
 
 
-OB_MODULES["stealth_mons"] =
+UNFINISHED["stealth_mons"] =
 {
   label = _("Stealth Monsters")
 
@@ -330,7 +330,7 @@ function STEALTH.control_setup(self)
 end
 
 
-OB_MODULES["stealth_mon_control"] =
+UNFINISHED["stealth_mon_control"] =
 {
   label = _("Stealth Monsters : Control")
 

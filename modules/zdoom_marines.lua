@@ -211,7 +211,7 @@ end
 
 -- Monster / Weapon prefs may go here eventually
 
-OB_MODULES["zdoom_marines"] =
+UNFINISHED["zdoom_marines"] =
 {
   label = _("ZDoom Marines")
 
@@ -287,7 +287,7 @@ function ZDOOM_MARINE.control_setup(self)
 end
 
 
-OB_MODULES["zdoom_marine_control"] =
+UNFINISHED["zdoom_marine_control"] =
 {
   label = _("ZDoom Marines : Control")
 
