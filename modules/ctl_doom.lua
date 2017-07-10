@@ -2,7 +2,7 @@
 --  MODULE: Doom Control
 ----------------------------------------------------------------
 --
---  Copyright (C) 2009-2010 Andrew Apted
+--  Copyright (C) 2009-2017 Andrew Apted
 --
 --  This program is free software; you can redistribute it and/or
 --  modify it under the terms of the GNU General Public License
@@ -20,36 +20,33 @@ CTL_DOOM = {}
 
 CTL_DOOM.MON_CHOICES =
 {
-  "default", _("DEFAULT"),
-  "none",    _("None at all"),
-  "scarce",  _("Scarce"),
-  "less",    _("Less"),
-  "plenty",  _("Plenty"),
-  "more",    _("More"),
-  "heaps",   _("Heaps"),
-  "insane",  _("INSANE"),
+  "default",    _("DEFAULT"),
+  "none",       _("None at all"),
+  "alot_less",  _("A Lot Less"),
+  "less",       _("Less"),
+  "plenty",     _("Plenty"),
+  "more",       _("More"),
+  "much_more",  _("Much More"),
 }
 
 CTL_DOOM.MON_PROBS =
 {
-  none   = 0
-  scarce = 2
-  less   = 15
-  plenty = 50
-  more   = 120
-  heaps  = 300
-  insane = 2000
+  none        = 0
+  alot_less   = 5
+  less        = 15
+  plenty      = 50
+  more        = 120
+  much_more   = 300
 }
 
 CTL_DOOM.DENSITIES =
 {
-  none   = 0.1
-  scarce = 0.2
-  less   = 0.4
-  plenty = 0.7
-  more   = 1.2
-  heaps  = 3.3
-  insane = 9.9
+  none        = 0.1
+  alot_less   = 0.2
+  less        = 0.4
+  plenty      = 0.7
+  more        = 1.2
+  much_more   = 3.3
 }
 
 
@@ -126,12 +123,16 @@ CTL_DOOM.WEAPON_CHOICES =
 {
   "default", _("DEFAULT"),
   "none",    _("None at all"),
+  "loveit",  _("I WANT IT"),
+
+--[[ FIXME !!!  this terminology clashes with Sooner/Later words used by Weapons setting
+
   "scarce",  _("Scarce"),
   "less",    _("Less"),
   "plenty",  _("Plenty"),
   "more",    _("More"),
   "heaps",   _("Heaps"),
-  "loveit",  _("I LOVE IT"),
+--]]
 }
 
 CTL_DOOM.WEAPON_PROBS =
