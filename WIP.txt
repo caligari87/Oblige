@@ -3,31 +3,32 @@ WORK IN PROGRESS
 ================
 
 
-Monsters
---------
+Monster Rework
+--------------
 
-+  more sophisticated handling of monster roles
-   [ e.g. eventually use Archviles in cages and traps ]
++  create boss fights based on new system
+   [ if boss is new in its role, only use once ]
+
+-  remove PARAM.xxx_factor  [ monster, health, ammo ]
 
 IDEA : "glacial" setting for Ramp-Up
 
--  bring back "skip_prob", and have a global palette
-   with "none", "less" and "some"
+-  adapt the "zone pallete" code to use for each room
+   [ apply global "less" setting on top of it ]
 
--  each monster has a "boss_level" value, defaulting to 1
+-  decide the HP-limit for each room
 
-   we compute an effective boss level of each monster for each map
-   [ e.g. map_boss_levels[mon] = info.boss_lev - N * game_along ]
+-  decide the DMG-limit for each room
 
-   when effective level is < 3, then monster can be used as "fodder",
-   otherwise monster can only be used in a boss fight.
-
-   the HP-limit and DMG-limit don't apply to the boss monsters in a room
-   [ though they may be reduced to account for them ]
+-  pick monsters to use in each room which complies with the
+   above limits
 
 -  kill "episodic_monsters" from GAME defs
 
--  a big boss fight every half-episode
+-  replace "dist_to_end" (whatever) with something DECENT
+   -  a big boss fight every half-episode
+
+-  assign places (floor chunks) for boss fights
 
 
 
@@ -35,8 +36,6 @@ Miscellaneous
 -------------
 
 -  void up cages in secret rooms (most of the time)
-
--  assign a floor chunk for boss fights
 
 -  get posts working with rail junctions again
 
