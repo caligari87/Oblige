@@ -865,10 +865,12 @@ function Episode_plan_monsters()
 
     -- apply the Ramp-Up setting
 
+--[[
     if OB_CONFIG.ramp_up == "slow"   then along = 0.0 + (along ^ 1.6) * 1.0 end
     if OB_CONFIG.ramp_up == "medium" then along = 0.0 + (along ^ 1.2) * 1.5 end
     if OB_CONFIG.ramp_up == "fast"   then along = 0.1 + (along ^ 1.0) * 2.0 end
     if OB_CONFIG.ramp_up == "turbo"  then along = 0.3 + (along ^ 0.8) * 2.5 end
+--]]
 
     LEV.mon_ranks = {}
     LEV.mon_along = along
@@ -879,12 +881,31 @@ function Episode_plan_monsters()
   end
 
 
+  local function calc_skip_quantity(LEV)
+    local along = LEV.game_along
+
+    -- FIXME : count # of monsters [ usable as fodder OR boss ]
+    local total = 15
+
+    local H = math.clamp(0, (1.0 - along * 0.8) * 0.70, 1)
+    local L = math.clamp(0, H - 0.35, 1)
+
+    local num = rand.range(L, H)
+
+    num = math.floor(num * total)
+
+stderrf(string.format("%s: skip %1.3f .. %1.3f --> %d\n", LEV.name, L, H, num))
+
+  end
+
+
   ---| Episode_plan_monsters |---
 
   init_monsters()
 
   each LEV in GAME.levels do
     calc_ranks(LEV)
+    calc_skip_quantity(LEV)
   end
 
   mark_new_monsters()
@@ -895,7 +916,7 @@ function Episode_plan_monsters()
 
   decide_boss_fights()
 
-  dump_monster_info()
+---  dump_monster_info()
 end
 
 
