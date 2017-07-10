@@ -866,17 +866,15 @@ function Episode_plan_monsters()
     -- apply the Ramp-Up setting
 
     if OB_CONFIG.ramp_up == "slow"   then along = 0.0 + (along ^ 1.6) * 1.0 end
-    if OB_CONFIG.ramp_up == "medium" then along = 0.1 + (along ^ 1.2) * 1.5 end
-    if OB_CONFIG.ramp_up == "fast"   then along = 0.2 + (along ^ 1.0) * 2.0 end
-    if OB_CONFIG.ramp_up == "crazy"  then along = 0.4 + (along ^ 0.7) * 2.6 end
-
-stderrf("mon_along @ %s : %1.2f\n", LEV.name, along)
+    if OB_CONFIG.ramp_up == "medium" then along = 0.0 + (along ^ 1.2) * 1.5 end
+    if OB_CONFIG.ramp_up == "fast"   then along = 0.1 + (along ^ 1.0) * 2.0 end
+    if OB_CONFIG.ramp_up == "turbo"  then along = 0.3 + (along ^ 0.8) * 2.5 end
 
     LEV.mon_ranks = {}
     LEV.mon_along = along
 
     each mon,info in GAME.MONSTERS do
-      LEV.mon_ranks[mon] = info.rank - along * 5.0
+      LEV.mon_ranks[mon] = math.clamp(0, info.rank - along * 5.0, 10)
     end
   end
 

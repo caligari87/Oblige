@@ -53,7 +53,7 @@ UI_MONS.RAMPS =
   "slow",    _("Slow"),
   "medium",  _("Medium"),
   "fast",    _("Fast"),
-  "crazy",   _("Crazy"),
+  "turbo",   _("TURBO"),
   "epi",     _("Episodic"),
 }
 
