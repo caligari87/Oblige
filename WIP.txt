@@ -6,14 +6,20 @@ WORK IN PROGRESS
 Monster Rework
 --------------
 
+-  replace "dist_to_end" (whatever) with something DECENT
+   -  a big boss fight every half-episode
+
 +  create boss fights based on new system
    [ if boss is new in its role, only use once ]
 
--  remove PARAM.xxx_factor  [ monster, health, ammo ]
+-  have an explicit "fodder_palette" for each level
+
+-  maybe have "guard_palette" and "exitboss_palette" too
+   [ new_guards, new_exitbosses ]
 
 IDEA : "glacial" setting for Ramp-Up
 
--  adapt the "zone pallete" code to use for each room
+-  adapt the "zone palette" code to use for each room
    [ apply global "less" setting on top of it ]
 
 -  decide the HP-limit for each room
@@ -22,11 +28,6 @@ IDEA : "glacial" setting for Ramp-Up
 
 -  pick monsters to use in each room which complies with the
    above limits
-
--  kill "episodic_monsters" from GAME defs
-
--  replace "dist_to_end" (whatever) with something DECENT
-   -  a big boss fight every half-episode
 
 -  assign places (floor chunks) for boss fights
 
