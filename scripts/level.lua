@@ -349,7 +349,7 @@ function Episode_plan_monsters()
     local mon_along = LEV.game_along
 
     -- this is for Doom 1 / Ultimate Doom / Heretic
-    if PARAM.episodic_monsters or OB_CONFIG.ramp_up == "epi" then
+    if OB_CONFIG.ramp_up == "epi" then
       mon_along = (LEV.ep_along + LEV.game_along) / 2
     end
 

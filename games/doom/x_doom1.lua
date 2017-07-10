@@ -29,8 +29,6 @@ ULTDOOM.PARAMETERS =
 {
   skip_monsters = { 15,25,35 }
 
-  episodic_monsters = true
-
   doom2_monsters = false
   doom2_weapons  = false
   doom2_skies    = false
