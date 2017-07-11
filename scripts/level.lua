@@ -467,11 +467,11 @@ function Episode_plan_monsters()
 
       gui.debugf("  global = %s\n", palette_str(LEV.global_pal))
       gui.debugf("  skip   = %s\n", table.list_str(LEV.skip_monsters))
-      gui.debugf("  majors = %s\n", palette_str(LEV.major_pal))
-      gui.debugf("  guards = %s\n", palette_str(LEV.guard_pal))
       gui.debugf("  fodder = %s\n", palette_str(LEV.fodder_pal))
-      gui.debugf("  boss   = %s\n", boss_fight_str(LEV.major_fights))
+      gui.debugf("  guards = %s\n", palette_str(LEV.guard_pal))
+      gui.debugf("  majors = %s\n", palette_str(LEV.major_pal))
       gui.debugf("  fights = %s\n", boss_fight_str(LEV.guard_fights))
+      gui.debugf("  boss   = %s\n", boss_fight_str(LEV.major_fights))
 
       if LEV.dist_to_end then
         gui.debugf("  dist_to_end = %d\n", LEV.dist_to_end)
@@ -503,9 +503,9 @@ function Episode_plan_monsters()
 
     LEV.mon_along = along
 
-    LEV.  skip_rank = int(40 + along * 140)
-    LEV. major_rank = int(25 + along * 110)
-    LEV.fodder_rank = int(10 + along *  80)
+    LEV.  skip_rank = int(30 + along * 100)
+    LEV. major_rank = int(15 + along *  85)
+    LEV.fodder_rank = int( 5 + along *  70)
 
 --  stderrf("%s: skip > %03d  major > %03d  fodder < %03d\n", LEV.name,
 --          LEV.skip_rank, LEV.major_rank, LEV.fodder_rank)
@@ -770,8 +770,11 @@ function Episode_plan_monsters()
     table.insert(LEV.major_fights, F)
 
     -- if we used the guard palette, prevent the chosen monster
-    -- from being used as guard as well
-    LEV.guard_pal[F.mon] = nil
+    -- from being used as guard as well [ move it to majors ].
+    if LEV.guard_pal[F.mon] then
+      LEV.major_pal[F.mon] = "some"
+      LEV.guard_pal[F.mon] = nil
+    end
   end
 
 
@@ -782,10 +785,7 @@ function Episode_plan_monsters()
     -- we will remove monsters, so copy the table
     pal = table.copy(pal)
 
-    -- FIXME : base this on size of level
-    local num = 4
-
-    for i = 1, num do
+    for i = 1, 5 do
       local fight = create_a_fight(pal, used, 1 + i)
 
       -- if palette is empty, try to duplicate a previous fight
