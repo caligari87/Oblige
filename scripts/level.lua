@@ -657,10 +657,49 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   end
 
 
+  local function palette_to_prob_tab(pal, used)
+    local result = {}
+
+    each mon,val in pal do
+      local prob = 50
+
+      if used[mon] then prob = prob / 5 end
+
+      if val == "less" then prob = prob / 5 end
+
+      result[mon] = prob
+    end
+
+    return result
+  end
+
+
   local function create_a_fight(pal, used, priority)
     if table.empty(pal) then return nil end
 
-    -- FIXME
+    -- decide the monster
+    local prob_tab = palette_to_prob_tab(pal, used)
+
+    local mon = rand.key_by_probs(prob_tab)
+
+    -- decide quantity
+    local count = 1
+
+    -- mark monster as used
+    if priority < 3 then
+      used[mon] = used[mon] + 1
+    elseif priority == 3 then
+      used[mon] = used[mon] + 0.333
+    end
+
+    -- create the information table
+    local FIGHT =
+    {
+      mon   = mon
+      count = count
+    }
+
+    return FIGHT
   end
 
 
