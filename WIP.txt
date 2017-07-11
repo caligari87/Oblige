@@ -6,7 +6,10 @@ WORK IN PROGRESS
 Monster Rework
 --------------
 
-+  TEST the new fodder palette and boss fight logic
++  planning : proper "count" in create_a_fight
+   [ take used[mon] value into account ]
+   [[ maybe 'density' of the monster too ]]
+   [[[ ideally OB_CONFIG.strength too ]]]
 
 
 -  adapt the "zone palette" code to use for each room
@@ -20,6 +23,8 @@ Monster Rework
    above limits
 
 -  assign places (floor chunks) for boss fights
+
+-  create OMG files, compare with demo analyses
 
 
 +  fix the monster control modules
