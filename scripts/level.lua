@@ -75,7 +75,7 @@
 
      major_pal    -- monsters usable as major bosses  |
      guard_pal    -- monsters usable as minor bosses  | subsets of global_pal
-    fodder_pal    -- monsters which are fodder        | 
+    fodder_pal    -- monsters which are fodder        |
 
     major_fight   : BOSS_FIGHT        -- end-of-level boss fight
     guard_fights  : list(BOSS_FIGHT)  -- guard fights, from biggest to smallest
@@ -432,30 +432,6 @@ function Episode_plan_monsters()
   end
 
 
-  local function decide_boss_fights()
-    each LEV in GAME.levels do
-      LEV.boss_fights = {}
-      LEV.seen_guards = {}
-
-      LEV.boss_quotas = { minor=0, nasty=0, tough=0 }
-
-      if LEV.prebuilt  then continue end
-      if LEV.is_secret then continue end
-
-      if OB_CONFIG.strength == "crazy" then continue end
-      if OB_CONFIG.bosses   == "none"  then continue end
-
-      pick_boss_quotas(LEV)
-
-      for i = 1, LEV.boss_quotas.tough do create_fight(LEV, "tough", i) end
-      for i = 1, LEV.boss_quotas.nasty do create_fight(LEV, "nasty", i) end
-      for i = 1, LEV.boss_quotas.minor do create_fight(LEV, "minor", i) end
-
-      for k = 1, LEV.boss_quotas.guard do create_guard(LEV, k) end
-    end
-  end
-
-
   local function palette_str(LEV)
     local names = table.keys_sorted(LEV.global_pal)
 
@@ -652,8 +628,6 @@ function Episode_plan_monsters()
 
     -- lastly, update the seen_monsters
 
----###  LEV.new_monsters = {}
-
     each mon,_ in pal do
       seen_monsters[mon] = 1
     end
@@ -683,6 +657,63 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   end
 
 
+  local function create_a_fight(pal, used, priority)
+    if table.empty(pal) then return nil end
+
+    -- FIXME
+  end
+
+
+  local function repeat_a_fight(prev_fights, priority)
+    -- FIXME
+  end
+
+
+  local function decide_major_fight(LEV)
+    local pal  = LEV.major_pal
+    local used = used_majors
+
+    if table.empty(pal) then
+      pal  = LEV.guard_pal
+      used = used_guards
+    end
+
+    -- this may end up NIL  (that is OK)
+    LEV.major_fight = create_a_fight(pal, used, 1)
+
+    -- if we used the guard palette, prevent the chosen monster
+    -- from being used as guard as well
+    if LEV.major_fight and LEV.guard_pal[LEV.major_fight.mon] then
+      LEV.guard_pal[LEV.major_fight.mon] = nil
+    end
+  end
+
+
+  local function decide_guard_fights(LEV)
+    local pal  = LEV.guard_pal
+    local used = used_guards
+
+    -- we will remove monsters, so copy the table
+    pal = table.copy(pal)
+
+    -- FIXME : base this on size of level
+    local num = 4
+
+    for i = 1, num do
+      local fight = create_a_fight(pal, used, 1 + i)
+
+      -- if palette is empty, try to duplicate a previous fight
+      if not fight then
+        fight = repeat_a_fight(LEV.guard_fights, i + 1)
+      end
+
+      if not fight then break; end
+
+      table.insert(LEV.guard_fights, fight)
+    end
+  end
+
+
   ---| Episode_plan_monsters |---
 
   get_avail_monsters()
@@ -695,11 +726,16 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   each LEV in GAME.levels do
     calc_ranks(LEV)
     calc_skip_quantity(LEV)
+
     decide_global_palette(LEV)
     segregate_palette(LEV)
-  end
 
---!!!! decide_boss_fights()
+    if LEV.prebuilt  then continue end
+    if LEV.is_secret then continue end
+
+    decide_major_fight(LEV)
+    decide_guard_fights(LEV)
+  end
 
 ---  dump_monster_info()
 end
