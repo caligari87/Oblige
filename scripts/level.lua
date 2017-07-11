@@ -703,8 +703,40 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   end
 
 
-  local function repeat_a_fight(prev_fights, priority)
-    -- FIXME
+  local function repeat_a_fight(fight_list, priority)
+    local counts = {}
+
+    each F in fight_list do
+      counts[F.mon] = (counts[F.mon] or 0) + 1
+    end
+
+    local best
+    local best_cost = 9e9
+
+    each F in fight_list do
+      local cost = counts[F.mon] + gui.random() / 10
+
+      -- monster used too much?
+      if counts[F.mon] >= 3 then continue end
+
+      if cost < best_cost then
+        best = F
+        best_cost = cost
+      end
+    end
+
+    if not best then return nil end
+
+    -- ok, duplicate that fight but reduce monster count
+    local FIGHT =
+    {
+      mon = best.mon
+      count = int((best.count + 1) / 2)
+    }
+
+    assert(FIGHT.count > 0)
+
+    return FIGHT
   end
 
 
