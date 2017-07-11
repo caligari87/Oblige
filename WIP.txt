@@ -14,10 +14,8 @@ Monster Rework
 
 -  have an explicit "fodder_palette" for each level
 
--  maybe have "guard_palette" and "exitboss_palette" too
-   [ new_guards, new_exitbosses ]
-
-IDEA : "glacial" setting for Ramp-Up
+-  maybe have "guard_palette" and "major_palette" too
+   [ new_guards, new_majors ]
 
 -  adapt the "zone palette" code to use for each room
    [ apply global "less" setting on top of it ]
@@ -30,6 +28,14 @@ IDEA : "glacial" setting for Ramp-Up
    above limits
 
 -  assign places (floor chunks) for boss fights
+
++  fix the monster control modules
+
+-  fix the ZDoom Marines module
+
+-  fix the Stealth Monsters module
+
+IDEA : "glacial" setting for Ramp-Up
 
 
 
