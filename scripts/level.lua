@@ -481,8 +481,7 @@ function Episode_plan_monsters()
       along = 0.75
 
     elseif OB_CONFIG.ramp_up == "epi" then
-      along = (LEV.ep_along * 2 + LEV.game_along) / 3
-
+      along = (LEV.ep_along * 3 + LEV.game_along) / 4
     end
 
     assert(along >= 0)
@@ -794,18 +793,28 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
     return
   end
 
-  each LEV in GAME.levels do
-    calc_ranks(LEV)
-    calc_skip_quantity(LEV)
+  each EPI in GAME.episodes do
+    each LEV in EPI.levels do
+      calc_ranks(LEV)
+      calc_skip_quantity(LEV)
 
-    decide_global_palette(LEV)
-    segregate_palette(LEV)
+      decide_global_palette(LEV)
+      segregate_palette(LEV)
 
-    if LEV.prebuilt  then continue end
-    if LEV.is_secret then continue end
+      if LEV.prebuilt  then continue end
+      if LEV.is_secret then continue end
 
-    decide_major_fight(LEV)
-    decide_guard_fights(LEV)
+      decide_major_fight(LEV)
+      decide_guard_fights(LEV)
+    end
+
+    -- reset some stuff for each episode when using the "Episodic" ramp-up
+    if OB_CONFIG.ramp_up == "epi" then
+      seen_monsters = {}
+
+      used_majors = {}
+      used_guards = {}
+    end
   end
 
 ---  dump_monster_info()
