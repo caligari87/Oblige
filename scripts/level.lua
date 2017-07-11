@@ -311,7 +311,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function create_fight(LEV, boss_type, along)
+  local function create_fight__OLD(LEV, boss_type, along)
     local bosses = collect_usable_bosses(LEV, boss_type)
 
     if table.empty(bosses) then return end
@@ -380,7 +380,7 @@ function Episode_plan_monsters()
   end
 
 
-  local function create_guard(LEV, along)
+  local function create_guard__OLD(LEV, along)
     local guards = collect_usable_guards(LEV)
 
 --- stderrf("%s Usable guards:\n%s\n", LEV.name, table.tostr(guards))
