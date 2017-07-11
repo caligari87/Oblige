@@ -73,9 +73,12 @@
     global_pal    -- global palette, can ONLY use these monsters
                   -- values are either "some" or "less"
 
----###  new_monsters  -- monsters which player has not encountered yet
+     major_pal    -- monsters usable as major bosses  |
+     guard_pal    -- monsters usable as minor bosses  | subsets of global_pal
+    fodder_pal    -- monsters which are fodder        | 
 
-    boss_fights : list(BOSS_FIGHT)   -- boss fights, from biggest to smallest
+    major_fight   : BOSS_FIGHT        -- end-of-level boss fight
+    guard_fights  : list(BOSS_FIGHT)  -- guard fights, from biggest to smallest
 
 
     === Weapon planning ===
@@ -269,17 +272,11 @@ function Episode_plan_monsters()
   --
   -- Decides various monster stuff :
   --
-  -- (1) monster palette for each level
-  -- (2) the end-of-level boss of each level
-  -- (3) guarding monsters (aka "mini bosses")
+  -- (1) fodder palette for each level
+  -- (2) the end-of-level boss of each level ("major boss")
+  -- (3) guarding monsters ("minor bosses")
   -- (4) one day: boss fights for special levels
   --
-  local used_types  = {}
-  local used_bosses = {}
-  local used_guards = {}
-
-  local BOSS_AHEAD = 2.2
-
 
   -- a list of all potentially usable monsters
   -- [ excludes ones disabled by Monster Control module ]
@@ -288,6 +285,10 @@ function Episode_plan_monsters()
   -- all the monsters which have occurred so far
   -- [ not distinguishing the role here, e.g. boss vs fodder ]
   local seen_monsters = {}
+
+  -- marks monsters which have been used as major/minor bosses
+  local used_majors = {}
+  local used_guards = {}
 
 
   local function is_monster_available(name, info)
@@ -663,6 +664,25 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   end
 
 
+  local function segregate_palette(LEV)
+    LEV.major_pal  = {}
+    LEV.guard_pal  = {}
+    LEV.fodder_pal = {}
+
+    each mon,val in LEV.global_pal do
+      local info = GAME.MONSTERS[mon]
+
+      if info.rank >= LEV.major_rank then
+        LEV.major_pal[mon] = val
+      elseif info.rank >= LEV.fodder_rank then
+        LEV.guard_pal[mon] = val
+      else
+        LEV.fodder_pal[mon] = val
+      end
+    end
+  end
+
+
   ---| Episode_plan_monsters |---
 
   get_avail_monsters()
@@ -676,6 +696,7 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
     calc_ranks(LEV)
     calc_skip_quantity(LEV)
     decide_global_palette(LEV)
+    segregate_palette(LEV)
   end
 
 --!!!! decide_boss_fights()
