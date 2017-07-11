@@ -6,16 +6,8 @@ WORK IN PROGRESS
 Monster Rework
 --------------
 
--  replace "dist_to_end" (whatever) with something DECENT
-   -  a big boss fight every half-episode
++  TEST the new fodder palette and boss fight logic
 
-+  create boss fights based on new system
-   [ if boss is new in its role, only use once ]
-
--  have an explicit "fodder_palette" for each level
-
--  maybe have "guard_palette" and "major_palette" too
-   [ new_guards, new_majors ]
 
 -  adapt the "zone palette" code to use for each room
    [ apply global "less" setting on top of it ]
@@ -29,11 +21,19 @@ Monster Rework
 
 -  assign places (floor chunks) for boss fights
 
+
 +  fix the monster control modules
 
 -  fix the ZDoom Marines module
 
 -  fix the Stealth Monsters module
+
+
+-  no need for EPISODE.seen_weapons being used OUTSIDE of
+   Episode_plan_weapons()
+
+??  replace "dist_to_end" (whatever) with something DECENT
+    -  a big boss fight every half-episode
 
 IDEA : "glacial" setting for Ramp-Up
 
