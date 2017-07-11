@@ -77,7 +77,7 @@
      guard_pal    -- monsters usable as minor bosses  | subsets of global_pal
     fodder_pal    -- monsters which are fodder        |
 
-    major_fight   : BOSS_FIGHT        -- end-of-level boss fight
+    major_fights  : list(BOSS_FIGHT)  -- end-of-level boss fight
     guard_fights  : list(BOSS_FIGHT)  -- guard fights, from biggest to smallest
 
 
@@ -432,22 +432,24 @@ function Episode_plan_monsters()
   end
 
 
-  local function palette_str(LEV)
-    local names = table.keys_sorted(LEV.global_pal)
+  local function palette_str(tab)
+    local names = table.keys_sorted(tab)
 
     return table.list_str(names)
   end
 
 
-  local function boss_fight_str(LEV)
+  local function boss_fight_str(list)
     local names = {}
 
-    each F in LEV.boss_fights do
-      local s = F.mon
+    each F in list do
+      local str = F.mon
+
       if F.count > 1 then
-        s = string.format("%dx %s", F.count, F.mon)
+        str = string.format("%dx ", F.count) .. str
       end
-      table.insert(names, s)
+
+      table.insert(names, str)
     end
 
     return table.list_str(names)
@@ -457,19 +459,25 @@ function Episode_plan_monsters()
   local function dump_monster_info()
     gui.debugf("\nPlanned monsters:\n\n")
 
-    -- FIXME !!!
-
     each LEV in GAME.levels do
       gui.debugf("%s\n", LEV.name)
-      gui.debugf("  level = %1.2f\n", LEV.monster_level)
+
+      gui.debugf("  ranks  = %6.1f / %6.1f / %6.1f\n",
+                 LEV.skip_rank, LEV.major_rank, LEV.fodder_rank)
+
+      gui.debugf("  global = %s\n", palette_str(LEV.global_pal))
+      gui.debugf("  skip   = %s\n", table.list_str(LEV.skip_monsters))
+      gui.debugf("  majors = %s\n", palette_str(LEV.major_pal))
+      gui.debugf("  guards = %s\n", palette_str(LEV.guard_pal))
+      gui.debugf("  fodder = %s\n", palette_str(LEV.fodder_pal))
+      gui.debugf("  boss   = %s\n", boss_fight_str(LEV.major_fights))
+      gui.debugf("  fights = %s\n", boss_fight_str(LEV.guard_fights))
+
       if LEV.dist_to_end then
         gui.debugf("  dist_to_end = %d\n", LEV.dist_to_end)
       end
-      gui.debugf("  new  = %s\n", table.list_str(LEV.new_monsters))
-      gui.debugf("  pal  = %s\n", palette_str(LEV))
-      gui.debugf("  skip = %s\n", table.list_str(LEV.skip_monsters))
-      gui.debugf("  b_quotas = %s\n", boss_quota_str(LEV))
-      gui.debugf("  bosses = %s\n", boss_fight_str(LEV))
+
+      gui.debugf("\n")
     end
   end
 
@@ -590,6 +598,8 @@ function Episode_plan_monsters()
     if extra_skip > 0 then
       local group = iterate_a_skip_group(pal, extra_skip)
 
+      LEV.skip_monsters = group
+
 -- stderrf("%s: extra_skip:%d --> GOT %d\n", LEV.name, extra_skip, #G)
 -- stderrf("-----> %s\n", table.list_str(G))
 
@@ -633,7 +643,7 @@ function Episode_plan_monsters()
 
     LEV.global_pal = pal
 
-gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
+--  gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
   end
 
 
@@ -680,15 +690,16 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
     local prob_tab = palette_to_prob_tab(pal, used)
 
     local mon = rand.key_by_probs(prob_tab)
+    assert(mon)
 
     -- decide quantity
     local count = 1
 
     -- mark monster as used
     if priority < 3 then
-      used[mon] = used[mon] + 1
+      used[mon] = (used[mon] or 0) + 1
     elseif priority == 3 then
-      used[mon] = used[mon] + 0.333
+      used[mon] = (used[mon] or 0) + 0.333
     end
 
     -- create the information table
@@ -703,20 +714,22 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
 
 
   local function repeat_a_fight(fight_list, priority)
-    local counts = {}
+    local repeated = {}
 
     each F in fight_list do
-      counts[F.mon] = (counts[F.mon] or 0) + 1
+      if F.is_repeat then
+        repeated[F.mon] = true
+      end
     end
 
     local best
     local best_cost = 9e9
 
     each F in fight_list do
-      local cost = counts[F.mon] + gui.random() / 10
+      -- only use a monster if not already repeated
+      if repeated[F.mon] then continue end
 
-      -- monster used too much?
-      if counts[F.mon] >= 3 then continue end
+      local cost = gui.random()
 
       if cost < best_cost then
         best = F
@@ -731,6 +744,7 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
     {
       mon = best.mon
       count = int((best.count + 1) / 2)
+      is_repeat = true
     }
 
     assert(FIGHT.count > 0)
@@ -748,14 +762,16 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
       used = used_guards
     end
 
-    -- this may end up NIL  (that is OK)
-    LEV.major_fight = create_a_fight(pal, used, 1)
+    -- this may end up NIL (that is OK)
+    local F = create_a_fight(pal, used, 1)
+
+    if not F then return end
+
+    table.insert(LEV.major_fights, F)
 
     -- if we used the guard palette, prevent the chosen monster
     -- from being used as guard as well
-    if LEV.major_fight and LEV.guard_pal[LEV.major_fight.mon] then
-      LEV.guard_pal[LEV.major_fight.mon] = nil
-    end
+    LEV.guard_pal[F.mon] = nil
   end
 
 
@@ -780,6 +796,8 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
       if not fight then break; end
 
       table.insert(LEV.guard_fights, fight)
+
+      pal[fight.mon] = nil
     end
   end
 
@@ -801,6 +819,9 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
       decide_global_palette(LEV)
       segregate_palette(LEV)
 
+      LEV.major_fights = {}
+      LEV.guard_fights = {}
+
       if LEV.prebuilt  then continue end
       if LEV.is_secret then continue end
 
@@ -817,7 +838,7 @@ gui.printf("Global monster palette for %s =\n%s\n", LEV.name, table.tostr(pal))
     end
   end
 
----  dump_monster_info()
+  dump_monster_info()
 end
 
 
@@ -922,6 +943,7 @@ function Episode_plan_weapons()
 
       gui.debugf("  secret = %s\n", LEV.secret_weapon or "NONE")
       gui.debugf("  quota  = %d\n", LEV.weapon_quota)
+      gui.debugf("\n")
     end
   end
 
