@@ -20,23 +20,21 @@ UI_MONS = { }
 
 UI_MONS.QUANTITIES =
 {
-	"none",   _("NONE"),
-	"scarce", _("Scarce"),
-	"less",   _("Less"),
-	"normal", _("Normal"),
-	"more",   _("More"),
-	"heaps",  _("Hordes"),
-	"nuts",   _("Nuts!"),
-	"mixed",  _("Mix It Up"),
+  "none",      _("NONE"),
+  "alot_less", _("A Lot Less"),
+  "less",      _("Less"),
+  "normal",    _("Normal"),
+  "more",      _("More"),
+  "much_more", _("Much More"),
+  "mixed",     _("Mix It Up"),
 }
 
 UI_MONS.STRENGTHS =
 {
-  "weak",   _("Weak"),
-  "easier", _("Easier"),
+  "weak",   _("Weaker"),
   "medium", _("Normal"),
-  "harder", _("Harder"),
-  "tough",  _("Tough"),
+  "tough",  _("Tougher"),
+  "mixed",  _("Mix It Up"),
 }
 
 UI_MONS.BOSSES =
@@ -67,7 +65,7 @@ OB_MODULES["ui_mons"] =
   options =
   {
     { name="mons",      label=_("Quantity"),  choices=UI_MONS.QUANTITIES }
---!!!  { name="strength",  label=_("Strength"),  choices=UI_MONS.STRENGTHS }
+    { name="strength",  label=_("Strength"),  choices=UI_MONS.STRENGTHS }
     { name="ramp_up",   label=_("Ramp Up"),   choices=UI_MONS.RAMPS,  gap=1 }
 
 --!!!  { name="bosses",    label=_("Bosses"),    choices=UI_MONS.BOSSES }
