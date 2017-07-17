@@ -33,6 +33,8 @@ Monster Rework
 
 -  fix the Stealth Monsters module
 
+-  update the Monster tutorial on the Wiki
+
 
 -  no need for EPISODE.seen_weapons being used OUTSIDE of
    Episode_plan_weapons()
