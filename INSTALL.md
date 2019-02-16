@@ -68,5 +68,5 @@ To build FLTK with the WIN32 cross-compiler:
 
 4. `cmake -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake CMAKE_BUILD_TYPE=Release -DOPTION_USE_GL=OFF -DOPTION_USE_THREADS=OFF`
 
-5. make
+5. `make`
    * Note that the build fails when it gets to some stuff which require FLUID to process some .fl files.  That doesn't matter since the needed libraries (in mingw/lib) have been built by then.
